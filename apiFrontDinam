@@ -1,0 +1,7 @@
+function getClientes() {
+  return JSON.parse(localStorage.getItem("clientes")) || [];
+}
+
+function salvarClientes(clientes) {
+  localStorage.setItem("clientes", JSON.stringify(clientes));
+}
