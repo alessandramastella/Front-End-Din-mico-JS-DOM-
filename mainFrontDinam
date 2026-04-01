@@ -1,0 +1,64 @@
+document.getElementById("form-cliente").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const cliente = {
+    id: Date.now(),
+    nome: document.getElementById("nome").value,
+    cpf: document.getElementById("cpf").value,
+    email: document.getElementById("email").value
+  };
+
+  if (!validarCamposObrigatorios(cliente)) {
+    alert("Preencha todos os campos corretamente!");
+    return;
+  }
+
+  function validarCamposObrigatorios(cliente) {
+  return cliente.nome && cliente.cpf && cliente.email;
+}
+
+function validarEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
+
+  const clientes = getClientes();
+  clientes.push(cliente);
+  salvarClientes(clientes);
+  renderClientes();
+
+
+  document.getElementById("nome").value = "";
+  document.getElementById("cpf").value = "";
+  document.getElementById("email").value = "";
+
+  document.getElementById("nome").focus();
+});
+
+function renderClientes() {
+  const clientes = getClientes();
+  const tabela = document.getElementById("tabela-clientes");
+  tabela.innerHTML = clientes.map(c =>
+    `<tr>
+      <td>${c.nome}</td>
+      <td>${c.cpf}</td>
+      <td>${c.email}</td>
+      <td>
+        <button onclick="deletarCliente(${c.id})">Deletar</button>
+        <button onclick="editarCliente(${c.id})">Editar</button>
+      </td>
+    </tr>`
+  ).join("");
+}
+
+function deletarCliente(id) {
+  let clientes = getClientes();
+  clientes = clientes.filter(c => c.id !== id);
+  salvarClientes(clientes);
+  renderClientes();
+}
+
+function editarCliente(id){
+  let clientes = getClientes();
+  
+}
