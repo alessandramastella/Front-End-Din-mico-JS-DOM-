@@ -11,7 +11,7 @@ form {
   margin-bottom: 20px;
 }
 
-input {
+input, select {
   margin: 5px;
   padding: 8px;
 }
@@ -36,4 +36,21 @@ table {
 th, td {
   padding: 10px;
   text-align: left;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  input, select, button {
+    width: 100%;
+    margin: 5px 0;
+  }
+  table {
+    font-size: 12px;
+    overflow-x: auto;
+    display: block;
+  }
 }
