@@ -1,38 +1,50 @@
+function getClientes() {
+  return JSON.parse(localStorage.getItem("clientes")) || [];
+}
+
+function salvarClientes(clientes) {
+  localStorage.setItem("clientes", JSON.stringify(clientes));
+}
+
+let clienteEditandoId = null; // controla se estamos editando
+
 document.getElementById("form-cliente").addEventListener("submit", e => {
   e.preventDefault();
 
-  const cliente = {
-    id: Date.now(),
-    nome: document.getElementById("nome").value,
-    cpf: document.getElementById("cpf").value,
-    email: document.getElementById("email").value
-  };
+  const nome = document.getElementById("nome").value;
+  const cpf = document.getElementById("cpf").value;
+  const email = document.getElementById("email").value;
 
-  if (!validarCamposObrigatorios(cliente)) {
+  if (!nome || !cpf || !email) {
     alert("Preencha todos os campos corretamente!");
     return;
   }
 
-  function validarCamposObrigatorios(cliente) {
-  return cliente.nome && cliente.cpf && cliente.email;
-}
+  let clientes = getClientes();
 
-function validarEmail(email) {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
-}
+  if (clienteEditandoId) {
+    // Atualiza cliente existente
+    clientes = clientes.map(c =>
+      c.id === clienteEditandoId ? { ...c, nome, cpf, email } : c
+    );
+    clienteEditandoId = null;
+  } else {
+    // Cria novo cliente
+    const cliente = {
+      id: Date.now(),
+      nome,
+      cpf,
+      email
+    };
+    clientes.push(cliente);
+  }
 
-  const clientes = getClientes();
-  clientes.push(cliente);
   salvarClientes(clientes);
   renderClientes();
 
-
-  document.getElementById("nome").value = "";
-  document.getElementById("cpf").value = "";
-  document.getElementById("email").value = "";
-
-  document.getElementById("nome").focus();
+  // Limpa formulário
+  document.getElementById("form-cliente").reset();
+  document.getElementById("submit").textContent = "Adicionar Cliente";
 });
 
 function renderClientes() {
@@ -44,8 +56,8 @@ function renderClientes() {
       <td>${c.cpf}</td>
       <td>${c.email}</td>
       <td>
-        <button onclick="deletarCliente(${c.id})">Deletar</button>
         <button onclick="editarCliente(${c.id})">Editar</button>
+        <button onclick="deletarCliente(${c.id})">Deletar</button>
       </td>
     </tr>`
   ).join("");
@@ -58,7 +70,16 @@ function deletarCliente(id) {
   renderClientes();
 }
 
-function editarCliente(id){
-  let clientes = getClientes();
-  
-}
+function editarCliente(id) {
+  const clientes = getClientes();
+  const cliente = clientes.find(c => c.id === id);
+  if (!cliente) return;
+
+  // Preenche formulário com dados do cliente
+  document.getElementById("nome").value = cliente.nome;
+  document.getElementById("cpf").value = cliente.cpf;
+  document.getElementById("email").value = cliente.email;
+
+  clienteEditandoId = id;
+  document.getElementById("submit").textContent = "Salvar Alterações";
+} 
